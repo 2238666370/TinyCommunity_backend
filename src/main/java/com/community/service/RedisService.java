@@ -13,4 +13,5 @@ public interface RedisService {
     String saveCheckCode(String code);
 
     String getCheckCode(String key);
+
 }

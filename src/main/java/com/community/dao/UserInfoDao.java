@@ -20,4 +20,10 @@ public class UserInfoDao extends ServiceImpl<UserInfoMapper, UserInfo> {
         queryWrapper.eq(UserInfo::getEmail, email);
         return this.getOne(queryWrapper);
     }
+
+    public UserInfo selectByUserName(String userName) {
+        LambdaQueryWrapper<UserInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserInfo::getUserName, userName);
+        return this.getOne(queryWrapper);
+    }
 }

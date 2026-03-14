@@ -34,18 +34,15 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/user")
-public class AccountController extends ABaseController{
+public class AccountController extends ABaseController {
     @Resource
     private UserInfoService userInfoService;
     @Resource
-    private SnowflakeUtil snowflakeUtil;
-    @Resource
-    private CaptchaGenerator captchaGenerator;
-    @Resource
     private RedisService redisService;
+
     @RequestMapping("/checkCode")
-    public ResponseVO<CheckCodeVO> checkCode(){
-        CaptchaResult captchaResult =captchaGenerator.generate();
+    public ResponseVO checkCode() {
+        CaptchaResult captchaResult = CaptchaGenerator.generate();
         String code = captchaResult.getCode();
         String captcha;
         try {
@@ -60,16 +57,31 @@ public class AccountController extends ABaseController{
         checkCodeVO.setTimestamp(System.currentTimeMillis());
         return this.getSuccessResponseVO(checkCodeVO);
     }
+
     @RequestMapping("/login")
-    public ResponseVO<String> login(@NotEmpty String key,
-                                    @NotEmpty String email,
-                                    @NotEmpty String password,
-                                    @NotEmpty String code){
+    public ResponseVO login(@NotEmpty String key,
+                            @NotEmpty String email,
+                            @NotEmpty String password,
+                            @NotEmpty String code) {
         String checkCode = redisService.getCheckCode(key);
-        if(!code.equals(checkCode)){
+        if (!code.equals(checkCode)) {
             throw new BusinessException("验证码错误");
         }
         UserInfoVO userInfoVO = userInfoService.login(email, password);
         return this.getSuccessResponseVO(userInfoVO);
+    }
+
+    @RequestMapping("/register")
+    public ResponseVO register(@NotEmpty String key,
+                               @NotEmpty String email,
+                               @NotEmpty String password,
+                               @NotEmpty String userName,
+                               @NotEmpty String code) {
+        String checkCode = redisService.getCheckCode(key);
+        if (!code.equals(checkCode)) {
+            throw new BusinessException("验证码错误");
+        }
+        Boolean isSuccess = userInfoService.register(email, password, userName);
+        return this.getSuccessResponseVO(isSuccess);
     }
 }

@@ -12,7 +12,7 @@ import java.util.Random;
 /**
  * 图形验证码生成工具类
  */
-@Component
+
 public class CaptchaGenerator {
 
     // 默认配置

@@ -13,4 +13,6 @@ import com.community.entity.vo.UserInfoVO;
  */
 public interface UserInfoService {
     UserInfoVO login(String email, String password);
+
+    Boolean register(String email, String password, String userName);
 }

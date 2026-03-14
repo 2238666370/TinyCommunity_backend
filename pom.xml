@@ -83,6 +83,13 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
 
+        <!-- Redisson -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>3.25.0</version>
+        </dependency>
+
         <!-- ========== JSON 处理 ========== -->
 
         <!-- Jackson（Spring Boot 默认已包含，无需额外版本） -->

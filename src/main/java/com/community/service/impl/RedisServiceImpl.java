@@ -38,6 +38,9 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public String getCheckCode(String key) {
-        return (String) redisUtils.get(RedisConstant.CAPTCHA_KEY_PREFIX + key);
+        String code = (String) redisUtils.get(RedisConstant.CAPTCHA_KEY_PREFIX + key);
+        redisUtils.delete(RedisConstant.CAPTCHA_KEY_PREFIX + key);
+        return code;
     }
+
 }
