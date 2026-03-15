@@ -4,6 +4,7 @@ import com.community.constant.RedisConstant;
 import com.community.scheduledtast.DistributedJwtSecretManager;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Version 1.0
  */
 @Component
+@Slf4j
 public class KeyRotationListener {
 
     @Resource
@@ -31,6 +33,8 @@ public class KeyRotationListener {
     private RedisTemplate<String, String> redisTemplate;
 
     private final Map<String, SecretKey> localKeyCache = new ConcurrentHashMap<>();
+
+    private String currentKeyId = null;
 
     /**
      * 初始化消息监听
@@ -49,7 +53,7 @@ public class KeyRotationListener {
      * 处理密钥轮换事件
      */
     public void onKeyRotated(String newKeyId, String channel) {
-        System.out.println("收到密钥轮换通知，新密钥ID: " + newKeyId + ", 通道: " + channel);
+        log.info("收到密钥轮换通知，新密钥ID: " + newKeyId + ", 通道: " + channel);
 
         // 1. 从Redis获取新密钥
         refreshLocalCache();
@@ -67,15 +71,15 @@ public class KeyRotationListener {
             SecretKey currentKey = jwtSecretManager.getCurrentSecret();
 
             // 获取密钥ID
-            String currentKeyId = getCurrentKeyIdFromRedis();
+            currentKeyId = getCurrentKeyIdFromRedis();
 
             if (currentKeyId != null && currentKey != null) {
                 // 更新本地缓存
                 localKeyCache.put(currentKeyId, currentKey);
-                System.out.println("本地密钥缓存已更新，密钥ID: " + currentKeyId);
+                log.info("本地密钥缓存已更新，密钥ID: " + currentKeyId);
             }
         } catch (Exception e) {
-            System.err.println("刷新本地密钥缓存失败: " + e.getMessage());
+            log.error("刷新本地密钥缓存失败: " + e.getMessage());
         }
     }
 
@@ -134,8 +138,8 @@ public class KeyRotationListener {
      * 获取当前密钥（先从本地缓存，没有再查Redis）
      */
     public SecretKey getCurrentKeyWithCache() {
-        String currentKeyId = getCurrentKeyIdFromRedis();
         if (currentKeyId == null) {
+            currentKeyId = getCurrentKeyIdFromRedis();
             return jwtSecretManager.getCurrentSecret();
         }
 
@@ -148,5 +152,16 @@ public class KeyRotationListener {
         SecretKey currentKey = jwtSecretManager.getCurrentSecret();
         localKeyCache.put(currentKeyId, currentKey);
         return currentKey;
+    }
+
+    public SecretKey getKeyById(String keyId) {
+        return localKeyCache.get(keyId);
+    }
+
+    public String getCurrentKeyIdWithCache() {
+        if (currentKeyId == null) {
+            currentKeyId = getCurrentKeyIdFromRedis();
+        }
+        return currentKeyId;
     }
 }

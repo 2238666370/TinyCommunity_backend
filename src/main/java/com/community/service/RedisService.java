@@ -1,5 +1,7 @@
 package com.community.service;
 
+import com.community.entity.pojo.UserInfo;
+
 /**
  * ClassName: RedisService
  * Package: com.community.service
@@ -15,4 +17,6 @@ public interface RedisService {
     String getCheckCode(String key);
 
     void deleteRefreshToken(String refreshToken);
+
+    UserInfo getUserInfoByRefreshToken(String refreshToken);
 }

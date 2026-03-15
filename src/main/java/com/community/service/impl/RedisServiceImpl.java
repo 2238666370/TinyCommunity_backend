@@ -2,9 +2,11 @@ package com.community.service.impl;
 
 import com.community.constant.RedisConstant;
 import com.community.constant.TimeConstant;
+import com.community.entity.pojo.UserInfo;
 import com.community.enums.ResponseCodeEnum;
 import com.community.exception.BusinessException;
 import com.community.service.RedisService;
+import com.community.util.JsonUtil;
 import com.community.util.RedisUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -46,5 +48,11 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void deleteRefreshToken(String refreshToken) {
         redisUtils.delete(RedisConstant.REFRESH_TOKEN_KEY_PREFIX + refreshToken);
+    }
+
+    @Override
+    public UserInfo getUserInfoByRefreshToken(String refreshToken) {
+        String userInfoStr = (String) redisUtils.get(RedisConstant.REFRESH_TOKEN_KEY_PREFIX + refreshToken);
+        return JsonUtil.fromJsonSilently(userInfoStr, UserInfo.class);
     }
 }
