@@ -4,6 +4,7 @@ import com.community.client.KeyRotationListener;
 import com.community.constant.RedisConstant;
 import com.community.constant.TimeConstant;
 import com.community.dao.UserInfoDao;
+import com.community.entity.pojo.SecretKey;
 import com.community.entity.pojo.UserInfo;
 import com.community.entity.vo.UserInfoVO;
 import com.community.enums.UserRoleEnum;
@@ -62,7 +63,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         claims.put("userId", userInfo.getUserId());
         claims.put("userName", userInfo.getUserName());
         claims.put("role", userInfo.getRole());
-        String accessToken = JwtUtil.createJWT(keyRotationListener.getCurrentKeyWithCache().toString(),TimeConstant.TWO_HOURS_OF_SECONDS, claims);
+        SecretKey secretKey = new SecretKey(keyRotationListener.getCurrentKeyIdFromRedis(),keyRotationListener.getCurrentKeyWithCache().toString());
+        String accessToken = JwtUtil.createJWT(secretKey,TimeConstant.TWO_HOURS_OF_SECONDS, claims);
         String refreshToken = RandomUtil.generateUUID();
         String refreshTokenKey = RedisConstant.REFRESH_TOKEN_KEY_PREFIX + refreshToken;
         String refreshTokenValue = JsonUtil.toJsonSilently(userInfo);//记录用户信息
@@ -113,4 +115,5 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfo.setRole(UserRoleEnum.NORMAL.getStatus());
         return userInfoDao.save(userInfo);
     }
+
 }

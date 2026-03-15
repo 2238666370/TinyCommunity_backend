@@ -84,4 +84,11 @@ public class AccountController extends ABaseController {
         Boolean isSuccess = userInfoService.register(email, password, userName);
         return this.getSuccessResponseVO(isSuccess);
     }
+
+    @RequestMapping("/logout")
+    public ResponseVO logout(@NotEmpty String refreshToken) {
+        //TODO 记录用户是否上线，可以用websocket或者http轮询检测
+        redisService.deleteRefreshToken(refreshToken);
+        return this.getSuccessResponseVO(null);
+    }
 }

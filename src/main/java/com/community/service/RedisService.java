@@ -14,4 +14,5 @@ public interface RedisService {
 
     String getCheckCode(String key);
 
+    void deleteRefreshToken(String refreshToken);
 }

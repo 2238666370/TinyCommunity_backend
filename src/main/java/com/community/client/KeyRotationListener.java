@@ -82,7 +82,7 @@ public class KeyRotationListener {
     /**
      * 从Redis获取当前密钥ID
      */
-    private String getCurrentKeyIdFromRedis() {
+    public String getCurrentKeyIdFromRedis() {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
         return ops.get(RedisConstant.KEY_ID);
     }

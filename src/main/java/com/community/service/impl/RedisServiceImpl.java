@@ -43,4 +43,8 @@ public class RedisServiceImpl implements RedisService {
         return code;
     }
 
+    @Override
+    public void deleteRefreshToken(String refreshToken) {
+        redisUtils.delete(RedisConstant.REFRESH_TOKEN_KEY_PREFIX + refreshToken);
+    }
 }
