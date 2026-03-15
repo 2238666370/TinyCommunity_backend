@@ -16,6 +16,7 @@ import com.community.util.SnowflakeUtil;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class AccountController extends ABaseController {
     @Resource
     private UserInfoService userInfoService;
@@ -55,6 +57,7 @@ public class AccountController extends ABaseController {
         checkCodeVO.setCaptcha(captcha);
         checkCodeVO.setKey(key);
         checkCodeVO.setTimestamp(System.currentTimeMillis());
+        log.info("获取图片验证码");
         return this.getSuccessResponseVO(checkCodeVO);
     }
 
