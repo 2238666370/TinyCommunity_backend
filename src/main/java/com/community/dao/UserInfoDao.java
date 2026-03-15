@@ -26,4 +26,10 @@ public class UserInfoDao extends ServiceImpl<UserInfoMapper, UserInfo> {
         queryWrapper.eq(UserInfo::getUserName, userName);
         return this.getOne(queryWrapper);
     }
+
+    public void updateByUserId(UserInfo userInfo) {
+        LambdaUpdateWrapper<UserInfo> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(UserInfo::getUserId, userInfo.getUserId());
+        this.update(userInfo, updateWrapper);
+    }
 }

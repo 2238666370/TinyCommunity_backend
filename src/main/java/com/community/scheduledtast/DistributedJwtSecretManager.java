@@ -5,6 +5,7 @@ import com.community.util.RedisUtils;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -28,6 +29,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @Version 1.0
  */
 @Component
+@Slf4j
 public class DistributedJwtSecretManager {
 
 
@@ -57,6 +59,7 @@ public class DistributedJwtSecretManager {
         try {
             // 获取分布式锁，超时时间5秒，等待时间10秒
             lockValue = redisUtils.acquireLock(RedisConstant.ROTATION_LOCK, 10000, 5000);
+            log.info("获取分布式锁成功，开始生成新密钥");
 
             if (lockValue != null) {
                 // 双重检查
@@ -68,12 +71,12 @@ public class DistributedJwtSecretManager {
                 // 生成新密钥
                 SecretKey newKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
                 String newKeyId = generateKeyId();
-
+                log.info("生成新密钥，密钥ID: " + newKeyId);
                 // 保存到Redis
                 redisUtils.setex(RedisConstant.CURRENT_KEY, encodeKey(newKey), 26 * 60 * 60); // 26小时过期
                 redisUtils.set(RedisConstant.KEY_ID, newKeyId);
                 redisUtils.set(RedisConstant.LAST_ROTATION, LocalDateTime.now().toString());
-
+                log.info("保存密钥成功，密钥ID: " + newKeyId);
                 return newKey;
             }
         } finally {
@@ -160,7 +163,9 @@ public class DistributedJwtSecretManager {
 
     private String generateKeyId() {
         // 使用 RedisUtils 的自增功能
+        log.info("开始生成密钥ID");
         Long counter = redisUtils.increment(RedisConstant.JWT_KEY_COUNTER);
+        log.info("生成密钥ID成功，密钥ID: " + counter);
         return "kid_" + System.currentTimeMillis() + "_" + (counter != null ? counter : 0);
     }
 }

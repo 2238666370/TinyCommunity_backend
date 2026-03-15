@@ -70,7 +70,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         //TODO 记录登录信息
         //更新上次登录时间
         userInfo.setLastLoginTime(System.currentTimeMillis());
-        userInfoDao.updateById(userInfo);
+        userInfoDao.updateByUserId(userInfo);
         //生成返回信息
         UserInfoVO userInfoVO = new UserInfoVO();
         userInfoVO.setUserId(userInfo.getUserId());
