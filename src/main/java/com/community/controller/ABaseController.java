@@ -1,6 +1,8 @@
 package com.community.controller;
 
 
+import com.community.entity.pojo.UserContext;
+import com.community.entity.pojo.UserInfo;
 import com.community.entity.vo.ResponseVO;
 import com.community.enums.ResponseCodeEnum;
 

@@ -21,4 +21,6 @@ public class RedisConstant {
     public static final String LAST_ROTATION = JWT_KEY_PREFIX + "rotation_time";
     public static final String ROTATION_SCHEDULED_LOCK = JWT_KEY_PREFIX +"scheduled:lock";
     public static final String JWT_KEY_COUNTER = "jwt:key:counter";
+
+    public static final String CATEGORY_KEY_PREFIX = REDIS_KEY_PREFIX + "category:";
 }
