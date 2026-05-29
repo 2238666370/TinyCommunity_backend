@@ -3,6 +3,7 @@ package com.community.controller;
 import com.community.annotation.GlobalInterceptor;
 import com.community.entity.pojo.Article;
 import com.community.entity.pojo.ArticleDraft;
+import com.community.entity.vo.PageResult;
 import com.community.entity.pojo.UserContext;
 import com.community.entity.vo.ResponseVO;
 import com.community.service.ArticleInfoService;
@@ -139,5 +140,25 @@ public class ArticleController extends ABaseController {
         Long userId = UserContext.getUserId();
         articleInfoService.updateDraft(draftId, userId, title, content, contentType);
         return this.getSuccessResponseVO("草稿更新成功");
+    }
+
+    /**
+     * 查询文章列表
+     */
+    @RequestMapping("/list")
+    public ResponseVO getArticleList(Integer categoryId) {
+        java.util.List<Article> articles = articleInfoService.getArticleList(categoryId);
+        return this.getSuccessResponseVO(articles);
+    }
+
+    /**
+     * 分页查询文章列表
+     */
+    @RequestMapping("/list/page")
+    public ResponseVO getArticleListByPage(Integer categoryId,
+                                          @NotNull Integer page,
+                                          @NotNull Integer pageSize) {
+        PageResult<Article> pageResult = articleInfoService.getArticleListByPage(categoryId, page, pageSize);
+        return this.getSuccessResponseVO(pageResult);
     }
 }

@@ -3,6 +3,9 @@ package com.community.service;
 import com.community.entity.pojo.Article;
 import com.community.entity.pojo.ArticleContent;
 import com.community.entity.pojo.ArticleDraft;
+import com.community.entity.vo.PageResult;
+
+import java.util.List;
 
 /**
  * ClassName: ArticleInfoService
@@ -59,4 +62,20 @@ public interface ArticleInfoService {
      * 更新草稿
      */
     void updateDraft(Long draftId, Long userId, String title, String content, Integer contentType);
+
+    /**
+     * 查询文章列表
+     * @param categoryId 分类ID，为空则不限制分类
+     * @return 文章列表
+     */
+    List<Article> getArticleList(Integer categoryId);
+
+    /**
+     * 分页查询文章列表
+     * @param categoryId 分类ID，为空则不限制分类
+     * @param page 页码（从1开始）
+     * @param pageSize 每页大小
+     * @return 分页结果
+     */
+    PageResult<Article> getArticleListByPage(Integer categoryId, Integer page, Integer pageSize);
 }

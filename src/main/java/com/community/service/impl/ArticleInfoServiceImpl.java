@@ -1,12 +1,12 @@
 package com.community.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.community.dao.ArticleContentDao;
 import com.community.dao.ArticleDraftDao;
 import com.community.dao.ArticleInfoDao;
 import com.community.entity.pojo.Article;
 import com.community.entity.pojo.ArticleContent;
 import com.community.entity.pojo.ArticleDraft;
+import com.community.entity.vo.PageResult;
 import com.community.enums.ArticleContentTypeEnum;
 import com.community.enums.ArticleStatusEnum;
 import com.community.exception.BusinessException;
@@ -15,6 +15,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * ClassName: ArticleInfoImpl
@@ -232,5 +234,36 @@ public class ArticleInfoServiceImpl implements ArticleInfoService {
         
         articleDraftDao.updateById(draft);
         log.info("草稿更新成功，草稿ID：{}", draftId);
+    }
+
+    @Override
+    public List<Article> getArticleList(Integer categoryId) {
+        java.util.List<Article> articles = articleInfoDao.selectArticleList(categoryId);
+        log.info("查询文章列表成功，分类ID：{}，结果数量：{}", categoryId, articles.size());
+        return articles;
+    }
+
+    @Override
+    public PageResult<Article> getArticleListByPage(Integer categoryId, Integer page, Integer pageSize) {
+        if (page == null || page < 1) {
+            page = 1;
+        }
+        if (pageSize == null || pageSize < 1 || pageSize > 100) {
+            pageSize = 10;
+        }
+        
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Article> pageResult = 
+            articleInfoDao.selectArticleListByPage(categoryId, page, pageSize);
+        
+        PageResult<Article> result = new PageResult<>(
+            pageResult.getRecords(),
+            page,
+            pageSize,
+            pageResult.getTotal()
+        );
+        
+        log.info("分页查询文章列表成功，分类ID：{}，页码：{}，每页大小：{}，总记录数：{}", 
+                categoryId, page, pageSize, pageResult.getTotal());
+        return result;
     }
 }
